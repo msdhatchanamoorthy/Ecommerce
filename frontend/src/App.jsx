@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 
 // Layout Components
@@ -48,19 +47,22 @@ function App() {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     }
-  }, [setTheme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Load user on mount
   useEffect(() => {
     loadUser();
-  }, [loadUser]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Fetch cart when user is authenticated
   useEffect(() => {
     if (isAuthenticated) {
       fetchCart();
     }
-  }, [isAuthenticated, fetchCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   return (
     <Router>
@@ -70,10 +72,9 @@ function App() {
 
         {/* Main Content Area */}
         <main className="flex-grow">
-          <AnimatePresence mode="wait">
-            <Routes>
-              {/* ============ PUBLIC ROUTES ============ */}
-              <Route path="/" element={<Home />} />
+          <Routes>
+            {/* ============ PUBLIC ROUTES ============ */}
+            <Route path="/" element={<Home />} />
               <Route path="/products" element={<Products />} />
               <Route path="/product/:id" element={<ProductDetails />} />
               <Route path="/products/:id" element={<ProductDetails />} />
@@ -160,7 +161,6 @@ function App() {
               {/* ============ 404 NOT FOUND ============ */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </AnimatePresence>
         </main>
 
         {/* Footer */}

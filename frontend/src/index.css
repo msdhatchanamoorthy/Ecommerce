@@ -5,8 +5,20 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --amazon-navy: #131921;
+    --amazon-dark-navy: #232f3e;
+    --amazon-accent: #febd69;
+    --amazon-button-primary: #f0c14b;
+    --amazon-button-primary-hover: #eeb933;
+    --amazon-button-secondary: #f3a847;
+    --amazon-button-secondary-hover: #f19b2c;
+    --amazon-header-light: #232f3e;
+    --amazon-background: #f3f3f3;
+  }
+
   body {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+    @apply bg-[#eaeded] dark:bg-gray-950 text-gray-900 dark:text-gray-100;
     font-family: 'Inter', sans-serif;
   }
 }
@@ -14,34 +26,25 @@
 @layer components {
   /* Button styles */
   .btn {
-    @apply px-6 py-3 rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply px-4 py-2 rounded-md font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm;
   }
 
-  .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700 active:scale-95;
+  .btn-amazon-primary {
+    @apply bg-[#f0c14b] text-gray-900 border border-[#a88734] hover:bg-[#eeb933] shadow-sm active:scale-95;
   }
 
-  .btn-secondary {
-    @apply bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600;
-  }
-
-  .btn-outline {
-    @apply border-2 border-primary-600 text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900;
-  }
-
-  /* Input styles */
-  .input {
-    @apply w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all;
+  .btn-amazon-secondary {
+    @apply bg-[#f3a847] text-gray-900 border border-[#a88734] hover:bg-[#f19b2c] shadow-sm active:scale-95;
   }
 
   /* Card styles */
-  .card {
-    @apply bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transition-all hover:shadow-xl;
+  .amazon-card {
+    @apply bg-white dark:bg-gray-800 p-5 shadow-sm transition-all hover:shadow-md;
   }
 
-  /* Container */
-  .container-custom {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  /* Navbar Link */
+  .nav-link-amazon {
+    @apply border border-transparent hover:border-white p-2 rounded transition-all text-sm font-bold text-white;
   }
 }
 

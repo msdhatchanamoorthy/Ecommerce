@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import api from '../services/api';
 import ProductCard from '../components/product/ProductCard';
@@ -12,42 +13,24 @@ import { useDebounce } from '../hooks/useDebounce';
 import { usePagination } from '../hooks/usePagination';
 
 export default function Products() {
+  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCartStore();
   const { addToWishlist, isInWishlist } = useWishlistStore();
   const { filters, setCategory, setSearch } = useFilterStore();
   const debouncedSearch = useDebounce(filters.search, 300);
-  const pagination = usePagination(products, 12);
+  const pagination = usePagination(products, 48);
 
   // Sync URL query params with filter store
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     const cat = params.get('category') || '';
     const search = params.get('search') || '';
 
-    // Only update if they differ from current filters to avoid unnecessary renders
     if (cat !== filters.category) setCategory(cat);
     if (search !== filters.search) setSearch(search);
-  }, [window.location.search, filters.category, filters.search, setCategory, setSearch]); // Depend on search string for changes
-
-  // Update URL when filters change (Store -> URL)
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    if (filters.category) params.set('category', filters.category);
-    else params.delete('category');
-
-    if (filters.search) params.set('search', filters.search);
-    else params.delete('search');
-
-    const newSearch = params.toString();
-    const currentSearch = window.location.search.replace(/^\?/, '');
-
-    if (newSearch !== currentSearch) {
-      window.history.pushState({}, '', `${window.location.pathname}${newSearch ? `?${newSearch}` : ''}`);
-    }
-  }, [filters.category, filters.search]);
+  }, [location.search]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -58,18 +41,14 @@ export default function Products() {
         if (debouncedSearch) params.append('search', debouncedSearch);
         if (filters.category) params.append('category', filters.category);
         if (filters.sortBy) params.append('sort', filters.sortBy);
+        params.append('limit', '100');
 
         const { data } = await api.get(`/products?${params.toString()}`);
 
-        // Apply additional filters on the client side
         let filtered = data.data || [];
-
         if (filters.priceRange) {
-          filtered = filtered.filter(
-            p => p.price >= filters.priceRange.min && p.price <= filters.priceRange.max
-          );
+          filtered = filtered.filter(p => p.price >= filters.priceRange.min && p.price <= filters.priceRange.max);
         }
-
         if (filters.rating > 0) {
           filtered = filtered.filter(p => p.rating >= filters.rating);
         }
@@ -82,95 +61,80 @@ export default function Products() {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, [debouncedSearch, filters.category, filters.sortBy, filters.priceRange, filters.rating]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Products</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Showing {pagination.currentItems.length > 0 ? (pagination.currentPage - 1) * 12 + 1 : 0} - {Math.min(pagination.currentPage * 12, products.length)} of {products.length} products
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-12">
+      {/* Top Header Row for Results */}
+      <div className="bg-white border-b border-gray-200 py-3 shadow-sm sticky top-[104px] z-40 px-4 md:px-8">
+        <div className="max-w-[1500px] mx-auto flex items-center justify-between">
+          <p className="text-sm font-medium text-gray-700">
+            {products.length} results for <span className="text-[#c45500] font-bold">"{filters.search || 'All Products'}"</span>
           </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar Filters */}
-          <div className="lg:col-span-1">
-            <ProductFilters />
+          <div className="flex items-center gap-2">
+            <span className="text-sm">Sort by:</span>
+            <span className="text-sm font-bold bg-gray-100 px-2 py-1 rounded cursor-pointer">{filters.sortBy || 'Featured'} ▾</span>
           </div>
+        </div>
+      </div>
 
-          {/* Products Grid */}
-          <div className="lg:col-span-3">
+      <div className="max-w-[1500px] mx-auto px-4 md:px-8 mt-6">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar Filters */}
+          <aside className="lg:w-64 flex-shrink-0 border-r border-gray-100 pr-6">
+            <ProductFilters />
+          </aside>
+
+          {/* Products Results */}
+          <main className="flex-grow">
+            <h1 className="text-xl font-bold mb-4 text-gray-900">RESULTS</h1>
+
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <div key={i} className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
-                    <Skeleton width="w-full" height="h-64" />
-                    <div className="p-4">
-                      <Skeleton width="w-3/4" height="h-4" className="mb-2" />
-                      <Skeleton width="w-1/2" height="h-4" className="mb-4" />
-                      <Skeleton width="w-full" height="h-10" />
-                    </div>
-                  </div>
-                ))}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <Skeleton key={i} height="h-80" />)}
               </div>
             ) : pagination.currentItems.length === 0 ? (
-              <EmptyState
-                icon="🔍"
-                title="No products found"
-                message="Try adjusting your filters or search term"
-              />
+              <EmptyState icon="😕" title="No results found" message="We couldn't find matches for your current search/filters." />
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {pagination.currentItems.map((product, idx) => (
-                    <motion.div
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                  {pagination.currentItems.map((product) => (
+                    <ProductCard
                       key={product._id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.05 }}
-                    >
-                      <ProductCard
-                        product={product}
-                        onAddToCart={addToCart}
-                        onAddToWishlist={addToWishlist}
-                        isInWishlist={isInWishlist(product._id)}
-                      />
-                    </motion.div>
+                      product={product}
+                      onAddToCart={addToCart}
+                      onAddToWishlist={addToWishlist}
+                      isInWishlist={isInWishlist(product._id)}
+                    />
                   ))}
                 </div>
 
-                {/* Pagination */}
+                {/* Amazon Style Pagination */}
                 {pagination.totalPages > 1 && (
-                  <div className="flex justify-center gap-2 mt-8">
+                  <div className="flex items-center justify-center gap-4 mt-12 py-4 border-t border-gray-100">
                     <button
                       onClick={pagination.prevPage}
                       disabled={!pagination.hasPrevPage}
-                      className="px-4 py-2 bg-orange-500 text-white rounded-lg disabled:opacity-50 hover:bg-orange-600 transition"
+                      className="px-4 py-1.5 border border-gray-300 rounded shadow-sm hover:bg-gray-50 disabled:opacity-50 text-sm font-medium"
                     >
                       ← Previous
                     </button>
-
-                    {Array.from({ length: pagination.totalPages }).map((_, i) => (
-                      <button
-                        key={i + 1}
-                        onClick={() => pagination.goToPage(i + 1)}
-                        className={`px-4 py-2 rounded-lg transition ${pagination.currentPage === i + 1
-                          ? 'bg-orange-500 text-white'
-                          : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-orange-200 dark:hover:bg-orange-900'
-                          }`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-
+                    <div className="flex gap-2">
+                      {Array.from({ length: pagination.totalPages }).map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => pagination.goToPage(i + 1)}
+                          className={`px-3 py-1 text-sm border ${pagination.currentPage === i + 1 ? 'border-[#e77600] text-[#c45500] font-bold shadow-inner bg-gray-50' : 'border-gray-300 hover:bg-gray-50'}`}
+                        >
+                          {i + 1}
+                        </button>
+                      ))}
+                    </div>
                     <button
                       onClick={pagination.nextPage}
                       disabled={!pagination.hasNextPage}
-                      className="px-4 py-2 bg-orange-500 text-white rounded-lg disabled:opacity-50 hover:bg-orange-600 transition"
+                      className="px-4 py-1.5 border border-gray-300 rounded shadow-sm hover:bg-gray-50 disabled:opacity-50 text-sm font-medium"
                     >
                       Next →
                     </button>
@@ -178,7 +142,14 @@ export default function Products() {
                 )}
               </>
             )}
-          </div>
+
+            {/* Disclaimer */}
+            <div className="mt-16 pt-8 border-t text-[11px] text-gray-500 leading-normal">
+              Need help? Visit the <span className="text-[#007185] hover:underline cursor-pointer">Help Section</span> or <span className="text-[#007185] hover:underline cursor-pointer">contact us</span>.
+              <br />
+              All prices include VAT. Select items may be subject to additional shipping fees.
+            </div>
+          </main>
         </div>
       </div>
     </div>
