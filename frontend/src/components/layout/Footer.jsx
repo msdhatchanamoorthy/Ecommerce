@@ -75,7 +75,7 @@ export default function Footer() {
             <a href="#" className="hover:underline">Privacy Notice</a>
             <a href="#" className="hover:underline">Interest-Based Ads</a>
           </div>
-          <p className="text-xs text-gray-400">© 1996-2025, ShopHub.in, Inc. or its affiliates</p>
+          <p className="text-xs text-gray-400">© 2025, ShopHub.in, Inc. or Dhatchana.dev</p>
         </div>
       </div>
     </footer>
