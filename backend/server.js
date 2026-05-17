@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 const connectDB = require('./src/config/database');
 const { errorHandler, notFound } = require('./src/middleware/errorHandler');
 
@@ -66,23 +67,34 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 
-// Welcome route
-app.get('/', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Welcome to E-Commerce API',
-    version: '1.0.0',
-    endpoints: {
-      auth: '/api/auth',
-      products: '/api/products',
-      cart: '/api/cart',
-      orders: '/api/orders',
-      admin: '/api/admin',
-      wishlist: '/api/wishlist',
-      health: '/health'
-    }
+// Serve frontend in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+  app.get('*', (req, res) =>
+    res.sendFile(
+      path.resolve(__dirname, '../', 'frontend', 'dist', 'index.html')
+    )
+  );
+} else {
+  // Welcome route
+  app.get('/', (req, res) => {
+    res.json({
+      success: true,
+      message: 'Welcome to E-Commerce API',
+      version: '1.0.0',
+      endpoints: {
+        auth: '/api/auth',
+        products: '/api/products',
+        cart: '/api/cart',
+        orders: '/api/orders',
+        admin: '/api/admin',
+        wishlist: '/api/wishlist',
+        health: '/health'
+      }
+    });
   });
-});
+}
 
 // Error handlers
 app.use(notFound);
