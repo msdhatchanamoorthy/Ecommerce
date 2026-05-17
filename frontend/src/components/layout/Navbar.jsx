@@ -1,12 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { HiOutlineLocationMarker, HiOutlineSearch, HiOutlineShoppingCart, HiOutlineMenu } from 'react-icons/hi';
 import useAuthStore from '../../context/authStore';
 import useCartStore from '../../context/cartStore';
 import useFilterStore from '../../context/filterStore';
 import useThemeStore from '../../context/themeStore';
 
 export default function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuthStore();
   const { cart } = useCartStore();
   const { isDark, toggleTheme } = useThemeStore();
@@ -22,102 +22,115 @@ export default function Navbar() {
     <header className="sticky top-0 z-50">
       {/* Top Bar */}
       <div className="bg-[#131921] text-white py-1">
-        <div className="max-w-[1500px] mx-auto px-4 flex items-center gap-4 h-14">
+        <div className="max-w-[1500px] mx-auto px-4 flex items-center gap-2 h-16">
+          
           {/* Logo */}
-          <Link to="/" className="border border-transparent hover:border-white p-2 rounded transition-all shrink-0">
-            <span className="text-2xl font-bold flex items-center">
-              ShopHub<span className="text-[#febd69]">.in</span>
+          <Link to="/" className="border border-transparent hover:border-white p-2 rounded transition-all shrink-0 flex flex-col items-start leading-none">
+            <span className="text-2xl font-bold flex items-baseline">
+              ShopHub<span className="text-[#febd69] text-lg">.in</span>
             </span>
           </Link>
 
           {/* Deliver to */}
-          <div className="hidden lg:flex flex-col border border-transparent hover:border-white p-2 rounded cursor-pointer leading-tight shrink-0">
-            <span className="text-xs text-gray-300">Deliver to</span>
-            <span className="text-sm font-bold flex items-center gap-1">
-              📍 India
-            </span>
+          <div className="hidden md:flex items-center border border-transparent hover:border-white px-2 py-1.5 rounded cursor-pointer shrink-0 ml-2">
+            <HiOutlineLocationMarker className="text-xl mr-1 self-end mb-0.5" />
+            <div className="flex flex-col leading-tight">
+              <span className="text-[12px] text-gray-300">Deliver to</span>
+              <span className="text-[14px] font-bold">India</span>
+            </div>
           </div>
 
           {/* Search Bar */}
           <form
             onSubmit={handleSearch}
-            className="flex-grow flex h-10 rounded-md overflow-hidden bg-white focus-within:ring-2 focus-within:ring-[#febd69]"
+            className="flex-grow flex h-[40px] rounded-[4px] overflow-hidden bg-white focus-within:ring-[3px] focus-within:ring-[#febd69] mx-2"
           >
-            <select
-              className="bg-gray-100 text-gray-700 px-3 text-sm border-r border-gray-300 outline-none cursor-pointer hover:bg-gray-200"
-              value={filters.category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="">All</option>
-              <option value="electronics">Electronics</option>
-              <option value="fashion">Fashion</option>
-              <option value="home">Home</option>
-              <option value="books">Books</option>
-            </select>
+            <div className="bg-gray-100 text-gray-600 px-3 flex items-center text-xs border-r border-gray-300 cursor-pointer hover:bg-gray-200 hover:text-black transition-all">
+              <select
+                className="bg-transparent outline-none cursor-pointer pr-1 appearance-none"
+                value={filters.category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="">All Categories</option>
+                <option value="electronics">Electronics</option>
+                <option value="fashion">Fashion</option>
+                <option value="home">Home & Kitchen</option>
+                <option value="books">Books</option>
+              </select>
+              <span className="ml-1 mt-0.5">▼</span>
+            </div>
             <input
               type="text"
-              className="flex-grow px-4 text-black outline-none text-base"
-              placeholder="Search ShopHub"
+              className="flex-grow px-3 text-black outline-none text-base placeholder:text-gray-500"
+              placeholder="Search ShopHub.in"
               value={filters.search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <button className="bg-[#febd69] hover:bg-[#f3a847] px-5 flex items-center justify-center transition-all">
-              <span className="text-black text-xl text-bold">🔍</span>
+            <button className="bg-[#febd69] hover:bg-[#f3a847] px-4 flex items-center justify-center transition-all">
+              <HiOutlineSearch className="text-black text-2xl" />
             </button>
           </form>
 
           {/* Right Links */}
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center shrink-0">
             {/* Theme Toggle */}
-            <button onClick={toggleTheme} className="nav-link-amazon hidden sm:block">
+            <button onClick={toggleTheme} className="hidden lg:flex items-center border border-transparent hover:border-white p-2 rounded mr-1">
               {isDark ? '☀️' : '🌙'}
             </button>
+
+            {/* Language Selection */}
+            <div className="hidden lg:flex items-center gap-1 border border-transparent hover:border-white p-2 rounded cursor-pointer mr-1">
+              <span className="text-xl">🇮🇳</span>
+              <span className="text-[14px] font-bold">EN</span>
+              <span className="text-[10px] text-gray-400 mt-1">▼</span>
+            </div>
 
             {/* Account */}
             <div className="relative group border border-transparent hover:border-white p-2 rounded cursor-pointer leading-tight">
               <Link to={user ? "/profile" : "/login"}>
-                <span className="text-xs">Hello, {user ? user.name.split(' ')[0] : 'sign in'}</span>
-                <div className="text-sm font-bold flex items-center gap-1">
-                  Account & Lists ▾
+                <span className="text-[12px]">Hello, {user ? user.name.split(' ')[0] : 'sign in'}</span>
+                <div className="text-[14px] font-extrabold flex items-center gap-1">
+                  Account & Lists <span className="text-[10px] text-gray-400 mt-1">▼</span>
                 </div>
               </Link>
-              <div className="absolute top-full right-0 mt-0 w-56 bg-white dark:bg-gray-800 text-black dark:text-white rounded-sm shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all p-4 z-50">
+              
+              {/* Dropdown */}
+              <div className="absolute top-full right-[-50px] mt-0 w-64 bg-white text-black rounded-sm shadow-[0_2px_10px_rgba(0,0,0,0.2)] opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all p-0 z-50 overflow-hidden">
                 {!isAuthenticated && (
-                  <div className="text-center mb-4 pb-4 border-b">
-                    <Link to="/login" className="block w-full bg-[#f0c14b] border border-[#a88734] py-1 text-sm rounded-sm hover:bg-[#eeb933] mb-1">
+                  <div className="p-4 text-center border-b border-gray-100 flex flex-col items-center">
+                    <Link to="/login" className="w-[80%] bg-gradient-to-b from-[#f7dfa5] to-[#f0c14b] border border-[#a88734] py-1 text-sm rounded-[3px] hover:from-[#f5d78e] hover:to-[#eeb933] shadow-sm mb-1 font-medium">
                       Sign in
                     </Link>
-                    <span className="text-[10px]">New customer? <Link to="/register" className="text-blue-600 hover:underline">Start here.</Link></span>
+                    <span className="text-[11px] text-gray-600">New customer? <Link to="/register" className="text-blue-700 hover:underline hover:text-[#c45500]">Start here.</Link></span>
                   </div>
                 )}
-                <div className="grid grid-cols-1 gap-2 text-sm">
+                <div className="p-4 grid grid-cols-1 gap-2 text-sm bg-gray-50">
+                  <h4 className="font-bold border-b pb-1 mb-1">Your Account</h4>
+                  <Link to="/profile" className="hover:text-[#c45500] hover:underline">Your Account</Link>
+                  <Link to="/orders" className="hover:text-[#c45500] hover:underline">Your Orders</Link>
+                  <Link to="/wishlist" className="hover:text-[#c45500] hover:underline">Your Wishlist</Link>
                   {isAuthenticated && (
-                    <>
-                      <Link to="/profile" className="hover:text-[#e47911] hover:underline">Your Account</Link>
-                      <Link to="/orders" className="hover:text-[#e47911] hover:underline">Your Orders</Link>
-                      <Link to="/wishlist" className="hover:text-[#e47911] hover:underline">Your Wishlist</Link>
-                      <button onClick={logout} className="text-left hover:text-[#e47911] hover:underline pt-2 border-t">Sign Out</button>
-                    </>
+                    <button onClick={logout} className="text-left hover:text-[#c45500] hover:underline pt-2 border-t mt-1">Sign Out</button>
                   )}
                 </div>
               </div>
             </div>
 
             {/* Orders */}
-            <Link to="/orders" className="hidden sm:flex flex-col border border-transparent hover:border-white p-2 rounded leading-tight shrink-0">
-              <span className="text-xs">Returns</span>
-              <span className="text-sm font-bold">& Orders</span>
+            <Link to="/orders" className="hidden sm:flex flex-col border border-transparent hover:border-white p-2 rounded leading-tight shrink-0 mx-1">
+              <span className="text-[12px]">Returns</span>
+              <span className="text-[14px] font-extrabold">& Orders</span>
             </Link>
 
             {/* Cart */}
-            <Link to="/cart" className="flex items-center border border-transparent hover:border-white p-2 rounded shrink-0 relative">
-              <div className="text-orange-400 text-3xl">🛒</div>
-              <div className="flex flex-col leading-none">
-                <span className="absolute top-1 left-6 bg-[#131921] text-[#f08804] text-sm font-bold px-1 rounded-full">
-                  {cart?.items?.length || 0}
+            <Link to="/cart" className="flex items-end border border-transparent hover:border-white px-2 py-1 rounded shrink-0 relative">
+              <div className="relative">
+                <HiOutlineShoppingCart className="text-white text-[38px]" />
+                <span className="absolute top-[-5px] left-[15px] bg-[#131921] text-[#f08804] text-[16px] font-bold px-1 min-w-[20px] text-center">
+                  {cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0}
                 </span>
-                <span className="text-sm font-bold mt-2">Cart</span>
               </div>
+              <span className="text-[14px] font-extrabold mb-1">Cart</span>
             </Link>
           </div>
         </div>
@@ -125,18 +138,23 @@ export default function Navbar() {
 
       {/* Bottom Bar */}
       <div className="bg-[#232f3e] text-white py-1">
-        <div className="max-w-[1500px] mx-auto px-4 flex items-center gap-6 h-10">
-          <button className="nav-link-amazon flex items-center gap-1">
-            ☰ All
+        <div className="max-w-[1500px] mx-auto px-4 flex items-center gap-4 h-10 overflow-x-auto no-scrollbar">
+          <button className="flex items-center gap-1 font-bold border border-transparent hover:border-white px-2 py-1.5 rounded transition-all shrink-0">
+            <HiOutlineMenu className="text-2xl" /> All
           </button>
-          <Link to="/products" className="nav-link-amazon">Best Sellers</Link>
-          <Link to="/products?category=electronics" className="nav-link-amazon">Electronics</Link>
-          <Link to="/products?category=fashion" className="nav-link-amazon">Fashion</Link>
-          <Link to="/products?category=home" className="nav-link-amazon">Home & Kitchen</Link>
-          <Link to="/products" className="nav-link-amazon hidden md:block">Customer Service</Link>
-          <Link to="/products" className="nav-link-amazon hidden lg:block">Amazon Pay</Link>
+          <Link to="/products" className="text-[14px] font-medium border border-transparent hover:border-white px-2 py-1.5 rounded transition-all shrink-0">Amazon miniTV</Link>
+          <Link to="/products" className="text-[14px] font-medium border border-transparent hover:border-white px-2 py-1.5 rounded transition-all shrink-0">Sell</Link>
+          <Link to="/products?sort=-numOfReviews" className="text-[14px] font-medium border border-transparent hover:border-white px-2 py-1.5 rounded transition-all shrink-0">Best Sellers</Link>
+          <Link to="/products" className="text-[14px] font-medium border border-transparent hover:border-white px-2 py-1.5 rounded transition-all shrink-0">Today's Deals</Link>
+          <Link to="/products?sort=-createdAt" className="text-[14px] font-medium border border-transparent hover:border-white px-2 py-1.5 rounded transition-all shrink-0">New Releases</Link>
+          <Link to="/products" className="text-[14px] font-medium border border-transparent hover:border-white px-2 py-1.5 rounded transition-all shrink-0">Mobiles</Link>
+          <Link to="/products" className="text-[14px] font-medium border border-transparent hover:border-white px-2 py-1.5 rounded transition-all shrink-0">Customer Service</Link>
+          <Link to="/products" className="text-[14px] font-medium border border-transparent hover:border-white px-2 py-1.5 rounded transition-all shrink-0 hidden md:block">Electronics</Link>
+          <Link to="/products" className="text-[14px] font-medium border border-transparent hover:border-white px-2 py-1.5 rounded transition-all shrink-0 hidden lg:block">Home & Kitchen</Link>
+          <Link to="/products" className="text-[14px] font-medium border border-transparent hover:border-white px-2 py-1.5 rounded transition-all shrink-0 hidden xl:block">Amazon Pay</Link>
         </div>
       </div>
     </header>
   );
 }
+

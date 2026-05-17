@@ -63,7 +63,15 @@ export default function ProductDetails() {
                 onMouseEnter={() => setActiveImage(idx)}
                 className={`w-12 h-12 border-2 rounded cursor-pointer overflow-hidden ${activeImage === idx ? 'border-[#e77600] shadow-sm' : 'border-gray-200'}`}
               >
-                <img src={img.url} alt="" className="w-full h-full object-contain" />
+                <img 
+                  src={img.url} 
+                  alt="" 
+                  className="w-full h-full object-contain" 
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(product.name)}&background=f3f4f6&color=666&size=100`;
+                  }}
+                />
               </div>
             ))}
           </div>
@@ -72,7 +80,11 @@ export default function ProductDetails() {
             <img
               src={images[activeImage]?.url}
               alt={product.name}
-              className="max-h-full max-w-full object-contain"
+              className="max-h-full max-w-full object-contain transition-all duration-300"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(product.name)}&background=f3f4f6&color=666&size=600&font-size=0.1`;
+              }}
             />
           </div>
         </div>
@@ -100,10 +112,10 @@ export default function ProductDetails() {
             </div>
             <div className="flex items-baseline gap-1 mt-1 text-[#b12704]">
               <span className="text-sm">-15%</span>
-              <span className="text-sm self-start mt-1">$</span>
-              <span className="text-3xl font-medium">{product.price}</span>
+              <span className="text-sm self-start mt-1">₹</span>
+              <span className="text-3xl font-medium">{product.price.toLocaleString('en-IN')}</span>
             </div>
-            <p className="text-sm text-gray-500 line-through">List Price: ${product.originalPrice || (product.price * 1.2).toFixed(2)}</p>
+            <p className="text-sm text-gray-500 line-through">M.R.P.: ₹{(product.originalPrice || (product.price * 1.2)).toLocaleString('en-IN')}</p>
             <p className="text-xs text-gray-500 mt-1">Inclusive of all taxes</p>
           </div>
 
@@ -128,14 +140,14 @@ export default function ProductDetails() {
         {/* Right: Buy Box */}
         <div className="lg:w-[20%]">
           <div className="border border-gray-300 rounded-lg p-5 sticky top-36">
-            <div className="text-2xl font-medium mb-1">${product.price}</div>
+            <div className="text-2xl font-medium mb-1">₹{product.price.toLocaleString('en-IN')}</div>
             <p className="text-sm text-[#007185] hover:underline cursor-pointer mb-4">FREE delivery Tomorrow</p>
 
             <div className="text-[#007600] text-lg font-bold mb-4">In stock</div>
 
             <div className="space-y-3">
               <button
-                onClick={() => addToCart(product)}
+                onClick={() => addToCart(product._id)}
                 className="w-full bg-[#ffd814] hover:bg-[#f7ca00] text-gray-900 border border-[#fcd200] py-2 rounded-full text-sm font-semibold shadow-sm transition-all active:scale-[0.98]"
               >
                 Add to Cart

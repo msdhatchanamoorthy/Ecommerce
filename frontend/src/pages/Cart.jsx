@@ -68,12 +68,18 @@ export default function Cart() {
                   {/* Product Info */}
                   <div className="col-span-2 flex gap-4 mb-4 md:mb-0">
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={item.product?.images?.[0]?.url || 'https://via.placeholder.com/150'}
+                      alt={item.product?.name || 'Product'}
                       className="w-20 h-20 object-cover rounded"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item.product?.name || 'Product')}&background=f3f4f6&color=666&size=150`;
+                      }}
                     />
                     <div>
-                      <h3 className="font-bold text-gray-900 dark:text-white">{item.name}</h3>
+                      <h3 className="font-bold text-gray-900 dark:text-white line-clamp-2">
+                        {item.product?.name || 'Product Unavailable'}
+                      </h3>
                       <button
                         onClick={() => removeFromCart(item._id)}
                         className="text-red-500 hover:text-red-700 text-sm mt-2"

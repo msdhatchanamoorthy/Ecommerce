@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,77 +9,66 @@
     --amazon-navy: #131921;
     --amazon-dark-navy: #232f3e;
     --amazon-accent: #febd69;
-    --amazon-button-primary: #f0c14b;
-    --amazon-button-primary-hover: #eeb933;
-    --amazon-button-secondary: #f3a847;
-    --amazon-button-secondary-hover: #f19b2c;
-    --amazon-header-light: #232f3e;
-    --amazon-background: #f3f3f3;
+    --amazon-button-yellow: #FFD814;
+    --amazon-button-yellow-hover: #F7CA00;
+    --amazon-button-orange: #FFA41C;
+    --amazon-button-orange-hover: #FF8F00;
   }
 
   body {
-    @apply bg-[#eaeded] dark:bg-gray-950 text-gray-900 dark:text-gray-100;
+    @apply bg-[#eaeded] text-gray-900;
     font-family: 'Inter', sans-serif;
   }
 }
 
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 @layer components {
-  /* Button styles */
-  .btn {
-    @apply px-4 py-2 rounded-md font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm;
-  }
-
-  .btn-amazon-primary {
-    @apply bg-[#f0c14b] text-gray-900 border border-[#a88734] hover:bg-[#eeb933] shadow-sm active:scale-95;
-  }
-
-  .btn-amazon-secondary {
-    @apply bg-[#f3a847] text-gray-900 border border-[#a88734] hover:bg-[#f19b2c] shadow-sm active:scale-95;
-  }
-
-  /* Card styles */
-  .amazon-card {
-    @apply bg-white dark:bg-gray-800 p-5 shadow-sm transition-all hover:shadow-md;
-  }
-
-  /* Navbar Link */
+  /* Amazon-style links */
   .nav-link-amazon {
-    @apply border border-transparent hover:border-white p-2 rounded transition-all text-sm font-bold text-white;
+    @apply border border-transparent hover:border-white p-2 rounded transition-all text-[14px] font-bold text-white leading-none flex items-center;
+  }
+
+  /* Amazon Card quadrants */
+  .amazon-box {
+    @apply bg-white p-5 shadow-sm border border-gray-100 flex flex-col h-full;
+  }
+
+  /* Amazon Button Primary (Yellow) */
+  .btn-amazon-yellow {
+    @apply bg-[#FFD814] hover:bg-[#F7CA00] border border-[#F2C200] py-1.5 px-4 rounded-[8px] text-sm text-center shadow-sm font-medium transition-all active:scale-[0.98];
+  }
+
+  /* Amazon Button Secondary (Orange) */
+  .btn-amazon-orange {
+    @apply bg-[#FFA41C] hover:bg-[#FF8F00] border border-[#FF8F00] py-1.5 px-4 rounded-[8px] text-sm text-center shadow-sm font-medium transition-all active:scale-[0.98];
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+/* Custom scrollbar for some areas */
+.amazon-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-800;
+.amazon-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-100;
 }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+.amazon-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400 dark:bg-gray-500;
-}
-
-/* Loading spinner */
-.spinner {
-  border: 3px solid rgba(0, 0, 0, 0.1);
-  border-top-color: #0ea5e9;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+.amazon-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
 }
 
 /* Smooth transitions */
@@ -87,7 +76,8 @@
   @apply transition-colors duration-200;
 }
 
-/* Prevent layout shift */
-img {
-  @apply max-w-full h-auto;
+/* Prime font style */
+.prime-text {
+  @apply italic font-black text-blue-500;
 }
+
